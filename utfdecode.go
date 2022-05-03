@@ -28,13 +28,17 @@ func Decode(s string) (string, error) {
 			cNext := ud.next().ch
 			codePos := ""
 			if cNext == 'u' {
-				for i := 0; i < 4; i++ {
+				for i := 0; i < 5; i++ {
 					cc := ud.next().ch
 					if isHexChar(cc) {
 						codePos += string(cc)
-					} else {
-						return "", ErrCodePositionStringToRune
+						continue
 					}
+					if i == 4 {
+						ud.back()
+						continue
+					}
+					return "", ErrCodePositionStringToRune
 				}
 				codePosRune, err := strconv.ParseInt(codePos, 16, 32)
 				if err != nil {
@@ -67,6 +71,17 @@ func (ud *UtfDecode) next() UtfDecode {
 	}
 	ud.position = ud.readPosition
 	ud.readPosition += 1
+	return *ud
+}
+
+func (ud *UtfDecode) back() UtfDecode {
+	ud.readPosition -= 1
+	if ud.readPosition >= len(ud.input) {
+		ud.ch = 0
+	} else {
+		ud.ch = ud.input[ud.readPosition]
+	}
+	ud.position = ud.readPosition
 	return *ud
 }
 

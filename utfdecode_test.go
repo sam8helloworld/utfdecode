@@ -36,6 +36,11 @@ func Test_Decode_Success(t *testing.T) {
 			input: `\uD83D\uDE04あ\uD83D\uDE07い\uD83D\uDC7Aう`,
 			want:  "😄あ😇い👺う",
 		},
+		{
+			name:  "4バイトのunicodeエスケープシーケンスとエスケープされていない文字が混ざっている",
+			input: `\u1F600あ\u1F64Fい\u11023う`,
+			want:  "😀あ🙏い𑀣う",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
