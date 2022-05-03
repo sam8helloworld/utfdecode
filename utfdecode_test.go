@@ -1,8 +1,11 @@
 package utfdecode
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
-func Test_(t *testing.T) {
+func Test_Decode_Success(t *testing.T) {
 	tests := []struct {
 		name  string
 		input string
@@ -35,9 +38,11 @@ func Test_(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := Decode(tt.input)
+			sut := NewDecoder(tt.input)
+			got, err := sut.Decode()
 			if err != nil {
 				t.Fatalf("failed to execute Decode: %v", err)
 			}
@@ -46,5 +51,29 @@ func Test_(t *testing.T) {
 			}
 		})
 	}
+}
 
+func Test_Decode_Failed(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  error
+	}{
+		{
+			name:  "code positionの文字列をruneに変換できない",
+			input: `\u😄😇👺`, // code positionが入るべきところに特殊文字
+			want:  ErrCodePositionStringToRune,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			sut := NewDecoder(tt.input)
+			_, err := sut.Decode()
+			if !errors.Is(err, tt.want) {
+				t.Fatalf("want: %v, but got %v", tt.want, err)
+			}
+		})
+	}
 }
