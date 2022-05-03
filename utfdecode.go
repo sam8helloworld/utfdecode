@@ -15,23 +15,21 @@ type UtfDecode struct {
 	ch           rune
 }
 
-func NewDecoder(s string) *UtfDecode {
-	return &UtfDecode{
+func Decode(s string) (string, error) {
+	ud := UtfDecode{
 		input: []rune(s),
 	}
-}
 
-func (ud *UtfDecode) Decode() (string, error) {
 	result := ""
 	codePoses := []rune{}
-	for c := ud.next(); c != 0; c = ud.next() {
+	for c := ud.next().ch; c != 0; c = ud.next().ch {
 		switch c {
 		case '\\':
-			cNext := ud.next()
+			cNext := ud.next().ch
 			codePos := ""
 			if cNext == 'u' {
 				for i := 0; i < 4; i++ {
-					cc := ud.next()
+					cc := ud.next().ch
 					if isHexChar(cc) {
 						codePos += string(cc)
 					} else {
@@ -61,7 +59,7 @@ func (ud *UtfDecode) Decode() (string, error) {
 	return result, nil
 }
 
-func (ud *UtfDecode) next() rune {
+func (ud *UtfDecode) next() UtfDecode {
 	if ud.readPosition >= len(ud.input) {
 		ud.ch = 0
 	} else {
@@ -69,7 +67,7 @@ func (ud *UtfDecode) next() rune {
 	}
 	ud.position = ud.readPosition
 	ud.readPosition += 1
-	return ud.ch
+	return *ud
 }
 
 func isHexChar(v rune) bool {
