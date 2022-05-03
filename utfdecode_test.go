@@ -41,8 +41,7 @@ func Test_Decode_Success(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			sut := NewDecoder(tt.input)
-			got, err := sut.Decode()
+			got, err := Decode(tt.input)
 			if err != nil {
 				t.Fatalf("failed to execute Decode: %v", err)
 			}
@@ -69,8 +68,7 @@ func Test_Decode_Failed(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			sut := NewDecoder(tt.input)
-			_, err := sut.Decode()
+			_, err := Decode(tt.input)
 			if !errors.Is(err, tt.want) {
 				t.Fatalf("want: %v, but got %v", tt.want, err)
 			}
