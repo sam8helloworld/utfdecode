@@ -6,11 +6,10 @@
 
 This is escaped unicode string decoder.
 
-Use like this([Go Playground](https://go.dev/play/p/6ChdpZ7_Ghk)):
+Use like this([Go Playground](https://go.dev/play/p/2qrSdCCpPd7)):
 
 ```go
-decoder := utfdecode.NewDecoder(`\uD83D\uDE04あ\uD83D\uDE07い\uD83D\uDC7Aう`)
-s, _ := decoder.Decode()
+s, _ := utfdecode.Decode(`\uD83D\uDE04あ\uD83D\uDE07い\uD83D\uDC7Aう`)
 fmt.Println(s) // 😄あ😇い👺う
 ```
 
